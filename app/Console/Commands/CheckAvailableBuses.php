@@ -93,8 +93,18 @@ class CheckAvailableBuses extends Command
                 // Send "not found" notifications to users who enabled it
                 foreach ($users as $user) {
                     if ($user->notify_when_not_found) {
-                        $this->sendNotFoundNotification($user->chat_id, $date);
-                        $this->info("  → Sent 'not found' to user: {$user->first_name} ({$user->chat_id})");
+                        try {
+                            $this->sendNotFoundNotification($user->chat_id, $date);
+                            $this->info("  → Sent 'not found' to user: {$user->first_name} ({$user->chat_id})");
+
+                        }catch (Exception $e) {
+                            Log::error('Error sending not found notification', [
+                                'chat_id' => $user->chat_id,
+                                'error' => $e->getMessage(),
+                                'trace' => $e->getTraceAsString(),
+                            ]);
+                            $this->error("  → Failed to send 'not found' to user: {$user->first_name} ({$user->chat_id})");
+                        }
                     }
                 }
 
@@ -109,8 +119,17 @@ class CheckAvailableBuses extends Command
                 // Send "not found" notifications to users who enabled it
                 foreach ($users as $user) {
                     if ($user->notify_when_not_found) {
-                        $this->sendNotFoundNotification($user->chat_id, $date);
-                        $this->info("  → Sent 'not found' to user: {$user->first_name} ({$user->chat_id})");
+                        try {
+                            $this->sendNotFoundNotification($user->chat_id, $date);
+                            $this->info("  → Sent 'not found' to user: {$user->first_name} ({$user->chat_id})");
+                        }catch (Exception $e) {
+                            Log::error('Error sending not found notification', [
+                                'chat_id' => $user->chat_id,
+                                'error' => $e->getMessage(),
+                                'trace' => $e->getTraceAsString(),
+                            ]);
+                            $this->error("  → Failed to send 'not found' to user: {$user->first_name} ({$user->chat_id})");
+                        }
                     }
                 }
 
@@ -122,8 +141,17 @@ class CheckAvailableBuses extends Command
 
             foreach ($users as $user) {
                 if ($user->notify_when_found) {
-                    $this->sendTelegramNotification($user->chat_id, $availableTrips);
-                    $this->info("  → Sent to user: {$user->first_name} ({$user->chat_id})");
+                    try {
+                        $this->sendTelegramNotification($user->chat_id, $availableTrips);
+                        $this->info("  → Sent to user: {$user->first_name} ({$user->chat_id})");
+                    }catch (Exception $e) {
+                        Log::error('Error sending available trips notification', [
+                            'chat_id' => $user->chat_id,
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString(),
+                        ]);
+                        $this->error("  → Failed to send to user: {$user->first_name} ({$user->chat_id})");
+                    }
                 }
             }
 

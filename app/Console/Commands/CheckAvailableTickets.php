@@ -167,11 +167,19 @@ class CheckAvailableTickets extends Command
         $bot = app(Nutgram::class);
         $message = $this->formatMessage($tickets);
 
-        $bot->sendMessage(
-            text: $message,
-            chat_id: $chatId,
-            parse_mode: 'HTML'
-        );
+        try {
+            $bot->sendMessage(
+                text: $message,
+                chat_id: $chatId,
+                parse_mode: 'HTML'
+            );
+        }catch (\Exception $exception){
+            Log::error('Error sending telegram notification', [
+                'chat_id' => $chatId,
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+        }
     }
 
     protected function sendNotFoundNotification(string $chatId, string $date): void
@@ -184,11 +192,19 @@ class CheckAvailableTickets extends Command
         $message .= "📍 <b>Yo'nalish:</b> TOSHKENT → QUMQURGON\n\n";
         $message .= "Hozircha bo'sh joylar mavjud emas. Biz sizga doimiy ravishda tekshirib turamiz va bo'sh joylar paydo bo'lganda darhol xabar beramiz! ✅";
 
-        $bot->sendMessage(
-            text: $message,
-            chat_id: $chatId,
-            parse_mode: 'HTML'
-        );
+        try {
+            $bot->sendMessage(
+                text: $message,
+                chat_id: $chatId,
+                parse_mode: 'HTML'
+            );
+        }catch (Exception $e) {
+            Log::error('Error sending not found notification', [
+                'chat_id' => $chatId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
     }
 
     protected function formatMessage(array $trains): string
